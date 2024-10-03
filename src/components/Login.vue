@@ -1,21 +1,54 @@
 <script setup>
-import { ref } from 'vue'
-import { handleLogin } from '@/api/auth.js'
-import {useRouter} from "vue-router";
+import {ref} from 'vue'
+import {useStore} from 'vuex'
+import {handleLogin} from '@/api/auth.js'
+import {useRouter} from 'vue-router'
 
+const store = useStore()
 const router = useRouter()
 
 const email = ref('')
 const password = ref('')
+const emailError = ref('')
+const passwordError = ref('')
+const loginError = ref('')
+
+const validate = () => {
+  let isValid = true
+  emailError.value = ''
+  passwordError.value = ''
+
+  if (!email.value) {
+    emailError.value = 'Email is required'
+    isValid = false
+  } else if (!/\S+@\S+\.\S+/.test(email.value)) {
+    emailError.value = 'Invalid email'
+    isValid = false
+  }
+
+  if (!password.value) {
+    passwordError.value = 'Password is required'
+    isValid = false
+  }
+
+  return isValid
+}
 
 const login = async () => {
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+  if (!validate()) return
 
   try {
     let response = await handleLogin(email.value, password.value)
-    console.log('Response:', response)
+    if (response.status === 200) {
+      const {jwt, totalSum, pendingDonations, completedDonations, totalMonetary, totalItems } = response.data
+      store.dispatch('login', {token: jwt, totalAmount: totalSum, pendingDonations: pendingDonations, completedDonations: completedDonations, monetaryDonations: totalMonetary, itemDonations: totalItems})
+      console.log('totalAmount', store.getters.totalAmount, 'pendingDonations', store.getters.pendingDonations, 'completedDonations', store.getters.completedDonations, 'monetaryDonations', store.getters.monetaryDonations, 'itemDonations', store.getters.itemDonations)
+      router.push('/')
+    } else {
+      loginError.value = response.data.message
+    }
   } catch (error) {
+    loginError.value = "Error ao fazer login. Tente novamente."
     console.error('Error:', error)
   }
 }
@@ -31,21 +64,24 @@ const goToRegister = () => {
     <form @submit.prevent="login">
       <div>
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required>
+        <input type="email" id="email" v-model="email" :class="{ 'input-error': emailError }">
+        <span v-if="emailError" class="error-message">{{ emailError }}</span>
       </div>
       <div>
-        <label for="password">Senha:</label>
-        <input type="password" id="password" v-model="password" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" v-model="password" :class="{ 'input-error': passwordError }">
+        <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
       </div>
-      <button type="submit">Entrar</button>
+      <span v-if="loginError" class="error-message">{{ loginError }}</span>
+      <button type="submit">Login</button>
     </form>
-    <p><a @click="goToRegister">Criar conta</a></p>
+    <p><a @click="goToRegister">Create account</a></p>
   </div>
 </template>
 
 <style scoped>
 #container {
-  max-width: 400px;
+  width: 400px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -55,7 +91,6 @@ const goToRegister = () => {
   font-family: 'Arial', sans-serif;
 }
 
-/* Estilo do título */
 h2 {
   text-align: center;
   color: #333;
@@ -63,7 +98,6 @@ h2 {
   font-size: 24px;
 }
 
-/* Estilo dos labels */
 label {
   display: block;
   margin-bottom: 5px;
@@ -71,7 +105,6 @@ label {
   color: #555;
 }
 
-/* Estilo dos inputs */
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -84,7 +117,6 @@ input[type="password"] {
   font-size: 16px;
 }
 
-/* Estilo do botão */
 button {
   width: 100%;
   padding: 10px;
@@ -101,7 +133,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Estilo do link */
 a {
   display: block;
   text-align: center;
@@ -112,5 +143,17 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  position: relative;
+  top: -12px;
+  margin-bottom: 10px;
+}
+
+.input-error {
+  border: 2px solid red !important;
 }
 </style>

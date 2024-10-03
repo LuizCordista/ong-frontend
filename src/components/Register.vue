@@ -1,29 +1,65 @@
 <script setup>
-import { ref } from 'vue'
-import {handleRegister} from "@/api/auth.js";
-import {useRouter} from "vue-router";
+import {ref, watch} from 'vue'
+import { handleRegister } from '@/api/auth.js'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
+const nameError = ref(null)
+const emailError = ref(null)
+const passwordError = ref(null)
+const registerError = ref(null)
+
+const validate = () => {
+  let isValid = true
+  nameError.value = null
+  emailError.value = null
+  passwordError.value = null
+
+  if (!name.value) {
+    nameError.value = 'Nome é obrigatório'
+    isValid = false
+  }
+
+  if (!email.value) {
+    emailError.value = 'Email é obrigatório'
+    isValid = false
+  } else if (!/\S+@\S+\.\S+/.test(email.value)) {
+    emailError.value = 'Email inválido'
+    isValid = false
+  }
+
+  if (!password.value) {
+    passwordError.value = 'Senha é obrigatória'
+    isValid = false
+  }
+
+  return isValid
+}
+
 
 const register = async () => {
+  if (!validate()) return
 
   try {
     let response = await handleRegister(name.value, email.value, password.value)
-    console.log('Response:', response)
+    if (response.status === 200) {
+      router.push('/login')
+    } else {
+      registerError.value = response.data.message
+    }
   } catch (error) {
+    registerError.value = "Erro ao registrar. Tente novamente."
     console.error('Error:', error)
   }
 }
 
-const goToLogin= () => {
-  router.push("/login")
+const goToLogin = () => {
+  router.push('/login')
 }
-
-
 </script>
 
 <template>
@@ -32,25 +68,30 @@ const goToLogin= () => {
     <form @submit.prevent="register">
       <div>
         <label for="name">Name:</label>
-        <input type="text" id="name" v-model="name" required>
+        <input type="text" id="name" v-model="name" :class="{ 'input-error': nameError }">
+        <span v-if="nameError" class="error-message">{{ nameError }}</span>
       </div>
       <div>
         <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required>
+        <input type="email" id="email" v-model="email" :class="{ 'input-error': emailError }">
+        <span v-if="emailError" class="error-message">{{ emailError }}</span>
       </div>
       <div>
         <label for="password">Senha:</label>
-        <input type="password" id="password" v-model="password" required>
+        <input type="password" id="password" v-model="password" :class="{ 'input-error': passwordError }">
+        <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
       </div>
+      <span v-if="registerError" class="error-message">{{ registerError }}</span>
       <button type="submit">Registrar</button>
     </form>
     <p><a @click="goToLogin">Entrar</a></p>
   </div>
 </template>
 
+
 <style scoped>
 #container {
-  max-width: 400px;
+  width: 400px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -117,5 +158,19 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* Estilo para mensagens de erro */
+.error-message {
+  color: red;
+  font-size: 14px;
+  position: relative;
+  top: -12px;
+  margin-bottom: 10px;
+}
+
+/* Estilo para inputs com erro */
+.input-error {
+  border: 2px solid red !important;
 }
 </style>
