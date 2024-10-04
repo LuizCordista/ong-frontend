@@ -41,8 +41,14 @@ const login = async () => {
     let response = await handleLogin(email.value, password.value)
     if (response.status === 200) {
       const {jwt, totalSum, pendingDonations, completedDonations, totalMonetary, totalItems } = response.data
-      store.dispatch('login', {token: jwt, totalAmount: totalSum, pendingDonations: pendingDonations, completedDonations: completedDonations, monetaryDonations: totalMonetary, itemDonations: totalItems})
-      console.log('totalAmount', store.getters.totalAmount, 'pendingDonations', store.getters.pendingDonations, 'completedDonations', store.getters.completedDonations, 'monetaryDonations', store.getters.monetaryDonations, 'itemDonations', store.getters.itemDonations)
+      store.dispatch('login', {
+        token: jwt,
+        totalAmount: totalSum,
+        pendingDonations: pendingDonations,
+        completedDonations: completedDonations,
+        monetaryDonations: totalMonetary,
+        itemDonations: totalItems
+      })
       router.push('/')
     } else {
       loginError.value = response.data.message
@@ -68,14 +74,14 @@ const goToRegister = () => {
         <span v-if="emailError" class="error-message">{{ emailError }}</span>
       </div>
       <div>
-        <label for="password">Password:</label>
+        <label for="password">Senha:</label>
         <input type="password" id="password" v-model="password" :class="{ 'input-error': passwordError }">
         <span v-if="passwordError" class="error-message">{{ passwordError }}</span>
       </div>
       <span v-if="loginError" class="error-message">{{ loginError }}</span>
       <button type="submit">Login</button>
     </form>
-    <p><a @click="goToRegister">Create account</a></p>
+    <p><a @click="goToRegister">Cadastrar nova Ong</a></p>
   </div>
 </template>
 

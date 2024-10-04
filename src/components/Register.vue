@@ -64,10 +64,10 @@ const goToLogin = () => {
 
 <template>
   <div id="container">
-    <h2>Register</h2>
+    <h2>Registrar</h2>
     <form @submit.prevent="register">
       <div>
-        <label for="name">Name:</label>
+        <label for="name">Nome da Ong:</label>
         <input type="text" id="name" v-model="name" :class="{ 'input-error': nameError }">
         <span v-if="nameError" class="error-message">{{ nameError }}</span>
       </div>
@@ -101,7 +101,6 @@ const goToLogin = () => {
   font-family: 'Arial', sans-serif;
 }
 
-/* Estilo do título */
 h2 {
   text-align: center;
   color: #333;
@@ -109,7 +108,6 @@ h2 {
   font-size: 24px;
 }
 
-/* Estilo dos labels */
 label {
   display: block;
   margin-bottom: 5px;
@@ -117,7 +115,6 @@ label {
   color: #555;
 }
 
-/* Estilo dos inputs */
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -130,7 +127,6 @@ input[type="password"] {
   font-size: 16px;
 }
 
-/* Estilo do botão */
 button {
   width: 100%;
   padding: 10px;
@@ -147,7 +143,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* Estilo do link */
 a {
   display: block;
   text-align: center;
@@ -160,7 +155,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Estilo para mensagens de erro */
 .error-message {
   color: red;
   font-size: 14px;
@@ -169,7 +163,6 @@ a:hover {
   margin-bottom: 10px;
 }
 
-/* Estilo para inputs com erro */
 .input-error {
   border: 2px solid red !important;
 }
