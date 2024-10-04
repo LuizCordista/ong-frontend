@@ -93,15 +93,20 @@ watch([monetaryDonations, itemDonations], updateChart);
 const showModal = ref(false);
 const donationType = ref('MONETARY');
 const donorName = ref('');
-const amount = ref(0);
+const amount = ref('');
 const itemDescription = ref('');
 const selectedDonation = ref(null);
+
+const formatCurrency = (value) => {
+  const number = parseFloat(value.replace(/[^\d]/g, '')) / 100;
+  return number.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
 
 const handleCreateDonation = async () => {
   const donationData = {
     donorName: donorName.value,
     donationType: donationType.value,
-    amount: donationType.value === 'MONETARY' ? amount.value : 0,
+    amount: donationType.value === 'MONETARY' ? parseFloat(amount.value.replace(/[^\d]/g, '')) / 100 : 0,
     itemDescription: donationType.value === 'ITEM' ? itemDescription.value : '',
     status: 'PENDING'
   };
@@ -122,7 +127,7 @@ const handleEditDonation = async () => {
   const donationData = {
     donorName: donorName.value,
     donationType: donationType.value,
-    amount: donationType.value === 'MONETARY' ? amount.value : 0,
+    amount: donationType.value === 'MONETARY' ? parseFloat(amount.value.replace(/[^\d]/g, '')) / 100 : 0,
     itemDescription: donationType.value === 'ITEM' ? itemDescription.value : '',
     status: 'PENDING'
   };
@@ -151,7 +156,7 @@ const openEditModal = (donation) => {
   selectedDonation.value = donation;
   donorName.value = donation.donorName;
   donationType.value = donation.donationType;
-  amount.value = donation.amount;
+  amount.value = formatCurrency(donation.amount.toString());
   itemDescription.value = donation.itemDescription;
   showModal.value = true;
 };
@@ -215,7 +220,7 @@ const toggleDonationsList = () => {
         </label>
         <label v-if="donationType === 'MONETARY'">
           Quantia:
-          <input v-model="amount" type="text" name="amount" />
+          <input v-model="amount" @input="amount = formatCurrency($event.target.value)" type="text" name="amount" />
         </label>
         <label v-if="donationType === 'ITEM'">
           Descrição do Item:
