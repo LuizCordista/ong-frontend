@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://ong-backend-production.up.railway.app';
 
 export const handleLogin = async (email, password) => {
     return await axios.post(`${API_URL}/auth/login`, {username: email, password});

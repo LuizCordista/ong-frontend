@@ -3,7 +3,7 @@ import store from '@/auth/index.js';
 
 export async function fetchDonationsData() {
   const token = store.state.token;
-  const response = await fetch('http://localhost:8080/donation/total', {
+  const response = await fetch('https://ong-backend-production.up.railway.app/donation/total', {
     headers: {
       'Authorization': `Bearer ${token}`
     }
@@ -16,7 +16,7 @@ export async function fetchDonationsData() {
 
 export const createDonation = async (donationData) => {
   try {
-    const response = await axios.post('http://localhost:8080/donation/create', donationData, {
+    const response = await axios.post('https://ong-backend-production.up.railway.app/donation/create', donationData, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${store.state.token}`
@@ -31,7 +31,7 @@ export const createDonation = async (donationData) => {
 
 export const fetchAllDonations = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/donation/all', {
+    const response = await axios.get('https://ong-backend-production.up.railway.app/donation/all', {
       headers: {
         'Authorization': `Bearer ${store.state.token}`
       }
@@ -45,7 +45,7 @@ export const fetchAllDonations = async () => {
 
 export const updateDonationStatus = async (id, status) => {
   try {
-    const response = await axios.put(`http://localhost:8080/donation/${id}/status`, null, {
+    const response = await axios.put(`https://ong-backend-production.up.railway.app/donation/${id}/status`, null, {
       params: { status },
       headers: {
         'Authorization': `Bearer ${store.state.token}`
@@ -60,7 +60,7 @@ export const updateDonationStatus = async (id, status) => {
 
 export const updateDonation = async (id, donationData) => {
   try {
-    const response = await axios.put(`http://localhost:8080/donation/${id}`, donationData, {
+    const response = await axios.put(`https://ong-backend-production.up.railway.app/donation/${id}`, donationData, {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${store.state.token}`
@@ -75,7 +75,7 @@ export const updateDonation = async (id, donationData) => {
 
 export const deleteDonation = async (id) => {
   try {
-    const response = await axios.delete(`http://localhost:8080/donation/${id}`, {
+    const response = await axios.delete(`https://ong-backend-production.up.railway.app/donation/${id}`, {
       headers: {
         'Authorization': `Bearer ${store.state.token}`
       }
@@ -89,7 +89,7 @@ export const deleteDonation = async (id) => {
 
 export const generateReports = async () => {
   try {
-    const response = await fetch('http://localhost:8080/donation/export/excel', {
+    const response = await fetch('https://ong-backend-production.up.railway.app/donation/export/excel', {
       method: 'GET',
         headers: {
             'Authorization': `Bearer ${store.state.token}`
